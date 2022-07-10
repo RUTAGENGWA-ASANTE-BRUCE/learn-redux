@@ -1,45 +1,72 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
-
+import { useState, useRef } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { useSelector, useDispatch } from "react-redux";
+import { increment, decrement, login, logout } from "./state/actions/actions";
 function App() {
-  const [count, setCount] = useState(0)
-
+  const numberRef = useRef(null);
+  const nameRef = useRef(null);
+  const counter = useSelector((state) => state.counterReducer);
+  const isLogged = useSelector((state) => state.loggedReducer);
+  const dispatch = useDispatch();
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
+      <input
+        type="number"
+        style={{
+          borderRadius: "6px",
+          padding: "8px",
+          marginTop: "20px",
+          width: "30%",
+        }}
+        ref={numberRef}
+      />
+      <h1>Counter {counter}</h1>
+      <button
+        style={{ height: 50, width: 50 }}
+        onClick={() => dispatch(increment(parseInt(numberRef.current.value)))}
+      >
+        +
+      </button>
+      <button
+        style={{ height: 50, width: 50, marginLeft: 10 }}
+        onClick={() => dispatch(decrement(parseInt(numberRef.current.value)))}
+      >
+        -
+      </button>
+      <br />
+      {isLogged.loggedIn ? (
+        <div>
+          <h1>Welcome, {isLogged.userName}</h1>
+          <button style={{ marginTop: 20 }} onClick={() => dispatch(logout())}>
+            Logout
           </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
+        </div>
+      ) : (
+        <div>
+          <h1 style={{ marginTop: "80px" }}>Enter Your Name</h1>
+          <input
+            type="text"
+            ref={nameRef}
+            style={{
+              borderRadius: "6px",
+              display: "",
+              padding: "8px",
+              marginTop: "20px",
+              width: "30%",
+            }}
+          />
+          <br />
+          <button
+            style={{ marginTop: 20 }}
+            onClick={() => dispatch(login(nameRef.current.value))}
           >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+            Login
+          </button>
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
